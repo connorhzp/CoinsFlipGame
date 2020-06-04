@@ -17,21 +17,20 @@ StartScene::~StartScene()
 
 void StartScene::SceneInit(){
     AttributeSet();
-    ToolBarBuild();
-    StartButtonBuild();
+    MenuBarBuild();
+    WidgetsBuild();
     SoundsSet();
 }
 
 void StartScene::AttributeSet(){
     setFixedSize(400, 600);
+    setWindowTitle("Coins Flip Game");
 
     //Only make sence for window
     setWindowIcon(QIcon(":/res/Coin0001.png"));
-
-    setWindowTitle("Coins Flip Game");
 }
 
-void StartScene::ToolBarBuild(){
+void StartScene::MenuBarBuild(){
     //add menubar
     QMenuBar *menu_bar = menuBar();
     setMenuBar(menu_bar);
@@ -50,12 +49,26 @@ void StartScene::ToolBarBuild(){
     control_menu -> addAction(close_action);
     options_menu -> addAction(expend_action);
 
+    connect(close_action, &QAction::triggered, this, &QMainWindow::close);
 }
 
-void StartScene::StartButtonBuild(){
-
+void StartScene::WidgetsBuild(){
+    WidgetButton *start_button = new WidgetButton(":/pictures/res/MenuSceneStartButton.png", "", this);
+    start_button -> move(width() * 0.5 - start_button->width() * 0.5, height() * 0.7);
 }
 
 void StartScene::SoundsSet(){
 
+}
+
+void StartScene::paintEvent(QPaintEvent *ev){
+    //background scene
+    QPainter painter(this);
+    QPixmap pix;
+    pix.load(":/pictures/res/PlayLevelSceneBg.png");
+    painter.drawPixmap(0, 0, width(), height(), pix);
+
+    //add title
+    pix.load(":/pictures/res/Title.png");
+    painter.drawPixmap(0, 0, pix.width(), pix.height(), pix);
 }

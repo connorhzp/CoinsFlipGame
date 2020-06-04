@@ -25,10 +25,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        startscene.cpp
+        startscene.cpp \
+    widgetbutton.cpp
 
 HEADERS += \
-        startscene.h
+        startscene.h \
+    widgetbutton.h
 
 FORMS += \
         startscene.ui

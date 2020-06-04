@@ -4,6 +4,10 @@
 #include <QMainWindow>
 #include <QMenuBar>
 #include <QAction>
+#include <QPainter>
+#include <QLabel>
+
+#include "widgetbutton.h"
 
 namespace Ui {
 class StartScene;
@@ -17,12 +21,13 @@ public:
     explicit StartScene(QWidget *parent = 0);
     ~StartScene();
 
+    virtual void paintEvent(QPaintEvent *ev);
 private:
     void SceneInit();
 
     void AttributeSet();
-    void ToolBarBuild();
-    void StartButtonBuild();
+    void MenuBarBuild();
+    void WidgetsBuild();
     void SoundsSet();
 
     Ui::StartScene *ui;
