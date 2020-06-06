@@ -26,11 +26,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         startscene.cpp \
-    widgetbutton.cpp
+    widgetbutton.cpp \
+    selectscene.cpp \
+    scene.cpp \
+    playscene.cpp \
+    gamecoin.cpp \
+    gameconfig.cpp
 
 HEADERS += \
         startscene.h \
-    widgetbutton.h
+    widgetbutton.h \
+    selectscene.h \
+    scene.h \
+    playscene.h \
+    gamecoin.h \
+    gameconfig.h
 
 FORMS += \
         startscene.ui

@@ -3,6 +3,7 @@
 
 #include <QPushButton>
 #include <QString>
+#include <QPropertyAnimation>
 
 class WidgetButton : public QPushButton
 {
@@ -10,11 +11,18 @@ class WidgetButton : public QPushButton
 public:
     WidgetButton(QString normal_img, QString focus_img = "", QWidget *parent = nullptr);
 
+    void mousePressEvent(QMouseEvent *e);
+    void mouseReleaseEvent(QMouseEvent *e);
+
 signals:
 
 public slots:
+    void ButtonBounce();
 
 private:
+    void ZoomUp();
+    void ZoomDown();
+
     QString normal_img;
     QString focus_img;
 };

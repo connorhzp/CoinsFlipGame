@@ -1,21 +1,15 @@
-#ifndef STARTSCENE_H
-#define STARTSCENE_H
+#ifndef SELECTSCENE_H
+#define SELECTSCENE_H
 
 #include "scene.h"
 #include "widgetbutton.h"
-#include "selectscene.h"
+#include "playscene.h"
 
-namespace Ui {
-class StartScene;
-}
-
-class StartScene : public Scene
+class SelectScene : public Scene
 {
     Q_OBJECT
-
 public:
-    explicit StartScene(QWidget *parent = 0);
-    ~StartScene();
+    explicit SelectScene(QWidget *parent = nullptr);
 
     virtual void paintEvent(QPaintEvent *ev);
 private:
@@ -25,8 +19,9 @@ private:
     virtual void WidgetsBuild() override;
     virtual void SoundsSet() override;
 
-    SelectScene *select_scene = nullptr;
-    Ui::StartScene *ui;
+signals:
+    void BacktoStartScene();
+public slots:
 };
 
-#endif // STARTSCENE_H
+#endif // SELECTSCENE_H

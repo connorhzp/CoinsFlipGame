@@ -2,8 +2,7 @@
 #include "ui_startscene.h"
 
 StartScene::StartScene(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::StartScene)
+    Scene(parent), ui(new Ui::StartScene)
 {
     ui->setupUi(this);
 
@@ -13,13 +12,6 @@ StartScene::StartScene(QWidget *parent) :
 StartScene::~StartScene()
 {
     delete ui;
-}
-
-void StartScene::SceneInit(){
-    AttributeSet();
-    MenuBarBuild();
-    WidgetsBuild();
-    SoundsSet();
 }
 
 void StartScene::AttributeSet(){
@@ -53,8 +45,26 @@ void StartScene::MenuBarBuild(){
 }
 
 void StartScene::WidgetsBuild(){
+    //start button:
     WidgetButton *start_button = new WidgetButton(":/pictures/res/MenuSceneStartButton.png", "", this);
     start_button -> move(width() * 0.5 - start_button->width() * 0.5, height() * 0.7);
+
+    connect(start_button, &WidgetButton::clicked, [=](){
+        start_button -> ButtonBounce();
+        QTimer::singleShot(500, this, [=]{
+            //hide current scene(start scene)
+            this -> hide();
+            //show select scene
+            select_scene -> show();
+        });
+    });
+
+    //new select scene
+    select_scene = new SelectScene(this);
+    connect(select_scene, &SelectScene::BacktoStartScene, [=]{
+       select_scene -> hide();
+       this -> show();
+    });
 }
 
 void StartScene::SoundsSet(){
