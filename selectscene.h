@@ -22,6 +22,10 @@ private:
 signals:
     void BacktoStartScene();
 public slots:
+
+private:
+    QSound *select_sound = nullptr;
+    QSound *back_sound = nullptr;
 };
 
 #endif // SELECTSCENE_H

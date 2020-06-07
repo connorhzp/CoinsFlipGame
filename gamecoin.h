@@ -15,6 +15,7 @@ public:
     void CoinInit(bool flag);
 
     bool isfront = true;
+    bool isforbidden = false;
 signals:
 
 public slots:

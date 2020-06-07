@@ -1,6 +1,6 @@
 #include "playscene.h"
 
-PlayScene::PlayScene(QWidget *parent) : Scene(parent), level_str(nullptr), win_button(nullptr)
+PlayScene::PlayScene(QWidget *parent) : Scene(parent)
 {
     SceneInit();
 }
@@ -32,6 +32,7 @@ void PlayScene::MenuBarBuild(){
     control_menu -> addAction(close_action);
     options_menu -> addAction(expend_action);
 
+    connect(restart_action, &QAction::triggered, [=](){LevelSet(cur_level);});
     connect(close_action, &QAction::triggered, this, &QMainWindow::close);
 }
 
@@ -40,6 +41,7 @@ void PlayScene::WidgetsBuild(){
     WidgetButton *back_button = new WidgetButton(":/pictures/res/BackButton.png", ":/pictures/res/BackButtonSelected.png", this);
     back_button -> move(width() - back_button->width(), height() - back_button->height());
     connect(back_button, &WidgetButton::clicked, [=]{
+        back_sound -> play();
         QTimer::singleShot(500, this, [=]{
             emit BacktoSelectScene();
         });
@@ -55,6 +57,7 @@ void PlayScene::WidgetsBuild(){
     //win sign:
     win_button = new WidgetButton(":/pictures/res/LevelCompletedDialogBg.png", "", this);
     connect(win_button, &WidgetButton::clicked, [=](){
+        next_sound -> play();
         win_button -> ButtonBounce();
         QTimer::singleShot(500, this, [=](){
             this -> LevelSet(cur_level +1);
@@ -72,47 +75,55 @@ void PlayScene::WidgetsBuild(){
             coin -> move(102 + (i %4) *50, 202 + (j %4) *50);
 
             connect(coin, &GameCoin::clicked, [=](){
-                coin -> CoinFlip();
-                coins_flag[i][j] = !coins_flag[i][j];
+                if (!coin -> isforbidden){
+                    flip_sound -> play();
+                    coin -> CoinFlip();
+                    coins_flag[i][j] = !coins_flag[i][j];
 
-                QTimer::singleShot(300, this, [=]{
-                    if (i +1 < 4){
-                        coins[i +1][j] -> CoinFlip();
-                        coins_flag[i +1][j] = !coins_flag[i +1][j];
-                    }
-                    if (i -1 >= 0){
-                        coins[i -1][j] -> CoinFlip();
-                        coins_flag[i -1][j] = !coins_flag[i -1][j];
-                    }
-                    if (j +1 < 4){
-                        coins[i][j +1] -> CoinFlip();
-                        coins_flag[i][j +1] = !coins_flag[i][j +1];
-                    }
-                    if (j -1 >= 0){
-                        coins[i][j -1] -> CoinFlip();
-                        coins_flag[i][j -1] = !coins_flag[i][j -1];
-                    }
+                    QTimer::singleShot(300, this, [=]{
+                        if (i +1 < 4){
+                            coins[i +1][j] -> CoinFlip();
+                            coins_flag[i +1][j] = !coins_flag[i +1][j];
+                        }
+                        if (i -1 >= 0){
+                            coins[i -1][j] -> CoinFlip();
+                            coins_flag[i -1][j] = !coins_flag[i -1][j];
+                        }
+                        if (j +1 < 4){
+                            coins[i][j +1] -> CoinFlip();
+                            coins_flag[i][j +1] = !coins_flag[i][j +1];
+                        }
+                        if (j -1 >= 0){
+                            coins[i][j -1] -> CoinFlip();
+                            coins_flag[i][j -1] = !coins_flag[i][j -1];
+                        }
 
-                    //judge win or not
-                    bool iswin = true;
-                    for (int i =0; i <4; i++){
-                        for (int j =0; j <4; j++){
-                            if (coins_flag[i][j] == false){
-                                iswin = false;
-                                break;
+                        //judge win or not
+                        bool iswin = true;
+                        for (int i =0; i <4; i++){
+                            for (int j =0; j <4; j++){
+                                if (coins_flag[i][j] == false){
+                                    iswin = false;
+                                    break;
+                                }
                             }
                         }
-                    }
-                    if (iswin){
-                        QPropertyAnimation * animation = new QPropertyAnimation(win_button, "geometry", this);
-                        animation->setDuration(1000);
-                        animation->setStartValue(QRect(win_button->x(), win_button->y(), win_button->width(), win_button->height()));
-                        animation->setEndValue(QRect(win_button->x(), win_button->y() + 200, win_button->width(), win_button->height()));
-                        animation->setEasingCurve(QEasingCurve::OutBounce);
-                        animation->start();
-                    }
-                });
+                        if (iswin){
+                            win_sound -> play();
+                            QPropertyAnimation * animation = new QPropertyAnimation(win_button, "geometry", this);
+                            animation->setDuration(1000);
+                            animation->setStartValue(QRect(win_button->x(), win_button->y(), win_button->width(), win_button->height()));
+                            animation->setEndValue(QRect(win_button->x(), win_button->y() + 200, win_button->width(), win_button->height()));
+                            animation->setEasingCurve(QEasingCurve::OutBounce);
+                            animation->start();
 
+                            //disable coin buttons after winning
+                            for (int i =0; i <4; i++)
+                                for (int j =0; j <4; j++)
+                                    coins[i][j] -> isforbidden = true;
+                        }
+                    });
+                }
             });
 
             coins[i][j] = coin;
@@ -121,7 +132,10 @@ void PlayScene::WidgetsBuild(){
 }
 
 void PlayScene::SoundsSet(){
-
+    next_sound = new QSound(":/sounds/res/TapButtonSound.wav", this);
+    back_sound = new QSound(":/sounds/res/BackButtonSound.wav", this);
+    flip_sound = new QSound(":/sounds/res/ConFlipSound.wav", this);
+    win_sound = new QSound(":/sounds/res/LevelWinSound.wav", this);
 }
 
 void PlayScene::LevelSet(int level){
@@ -138,6 +152,10 @@ void PlayScene::LevelSet(int level){
         }
     }
 
+    //enable coin buttons before starting
+    for (int i =0; i <4; i++)
+        for (int j =0; j <4; j++)
+            coins[i][j] -> isforbidden = false;
 }
 
 void PlayScene::paintEvent(QPaintEvent *ev){

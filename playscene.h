@@ -26,8 +26,12 @@ signals:
 public slots:
 
 private:
-    QLabel *level_str;
-    WidgetButton *win_button;
+    QLabel *level_str = nullptr;
+    WidgetButton *win_button = nullptr;
+    QSound *next_sound = nullptr;
+    QSound *back_sound = nullptr;
+    QSound *flip_sound = nullptr;
+    QSound *win_sound = nullptr;
 
     unsigned char cur_level;
     bool coins_flag[4][4];

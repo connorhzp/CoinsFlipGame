@@ -40,6 +40,7 @@ void SelectScene::WidgetsBuild(){
     WidgetButton *back_button = new WidgetButton(":/pictures/res/BackButton.png", ":/pictures/res/BackButtonSelected.png", this);
     back_button -> move(width() - back_button->width(), height() - back_button->height());
     connect(back_button, &WidgetButton::clicked, [=]{
+        back_sound -> play();
         QTimer::singleShot(500, this, [=]{
             emit BacktoStartScene();
         });
@@ -49,6 +50,8 @@ void SelectScene::WidgetsBuild(){
     PlayScene *play_scene = new PlayScene(this);
     connect(play_scene, &PlayScene::BacktoSelectScene, [=]{
         play_scene -> hide();
+        //keep the position the same
+        this -> setGeometry(play_scene -> geometry());
         this -> show();
     });
 
@@ -67,9 +70,12 @@ void SelectScene::WidgetsBuild(){
         label->setAttribute(Qt::WA_TransparentForMouseEvents,true);
 
         connect(level_button, &WidgetButton::clicked, [=]{
+            select_sound -> play();
             QTimer::singleShot(200, this, [=]{
                 this -> hide();
                 play_scene -> LevelSet(i +1);
+                //keep the position the same
+                play_scene -> setGeometry(this -> geometry());
                 play_scene -> show();
             });
         });
@@ -77,7 +83,8 @@ void SelectScene::WidgetsBuild(){
 }
 
 void SelectScene::SoundsSet(){
-
+    select_sound = new QSound(":/sounds/res/TapButtonSound.wav", this);
+    back_sound = new QSound(":/sounds/res/BackButtonSound.wav", this);
 }
 
 void SelectScene::paintEvent(QPaintEvent *ev){

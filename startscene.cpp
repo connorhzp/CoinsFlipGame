@@ -50,11 +50,14 @@ void StartScene::WidgetsBuild(){
     start_button -> move(width() * 0.5 - start_button->width() * 0.5, height() * 0.7);
 
     connect(start_button, &WidgetButton::clicked, [=](){
+        sound -> play();
         start_button -> ButtonBounce();
         QTimer::singleShot(500, this, [=]{
             //hide current scene(start scene)
             this -> hide();
             //show select scene
+            //keep the scene position the same
+            select_scene ->setGeometry(this -> geometry());
             select_scene -> show();
         });
     });
@@ -63,12 +66,14 @@ void StartScene::WidgetsBuild(){
     select_scene = new SelectScene(this);
     connect(select_scene, &SelectScene::BacktoStartScene, [=]{
        select_scene -> hide();
+       //keep the position the same
+       this -> setGeometry(select_scene -> geometry());
        this -> show();
     });
 }
 
 void StartScene::SoundsSet(){
-
+    sound = new QSound(":/sounds/res/TapButtonSound.wav", this);
 }
 
 void StartScene::paintEvent(QPaintEvent *ev){

@@ -63,5 +63,6 @@ void GameCoin::BeingFlip(){
 }
 
 void GameCoin::CoinFlip(){
-    timer -> start(30);
+    if (!isforbidden)
+        timer -> start(30);
 }

@@ -10,6 +10,7 @@
 #include <QTimer>
 #include <QString>
 #include <QFont>
+#include <QSound>
 #include <QPropertyAnimation>
 
 

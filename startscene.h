@@ -26,6 +26,9 @@ private:
     virtual void SoundsSet() override;
 
     SelectScene *select_scene = nullptr;
+    QSound *sound = nullptr;
+
+
     Ui::StartScene *ui;
 };
 
